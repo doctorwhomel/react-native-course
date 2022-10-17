@@ -21,6 +21,7 @@ import { fetchCampsites } from "../features/campsites/campsitesSlice";
 import { fetchPromotions } from "../features/promotions/promotionsSlice";
 import { fetchComments } from "../features/comments/commentsSlice";
 import FavoritesScreen from "./FavoritesScreen";
+import LoginScreen from "./LoginScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -125,13 +126,35 @@ const FavoritesNavigator = () => {
   return (
     <Stack.Navigator screenOptions={screenOptions}>
       <Stack.Screen
-        name="Favorite"
+        name="Favorites"
         component={FavoritesScreen}
         options={({ navigation }) => ({
           title: "Favorite Campsites",
           headerLeft: () => (
             <Icon
               name="heart"
+              type="font-awesome"
+              iconStyle={styles.stackIcon}
+              onPress={() => navigation.toggleDrawer()}
+            />
+          ),
+        })}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const LoginNavigator = () => {
+  const Stack = createStackNavigator();
+  return (
+    <Stack.Navigator screenOptions={screenOptions}>
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={({ navigation }) => ({
+          headerLeft: () => (
+            <Icon
+              name="sign-in"
               type="font-awesome"
               iconStyle={styles.stackIcon}
               onPress={() => navigation.toggleDrawer()}
@@ -210,6 +233,21 @@ const Main = () => {
         drawerStyle={{ backgroundColor: "#CEC8FF" }}
       >
         <Drawer.Screen
+          name="Login"
+          component={LoginNavigator}
+          options={{
+            drawerIcon: ({ color }) => (
+              <Icon
+                name="sign-in"
+                type="font-awesome"
+                size={24}
+                iconStyle={{ width: 24 }}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Drawer.Screen
           name="Home"
           component={HomeNavigator}
           options={{
@@ -241,7 +279,6 @@ const Main = () => {
             ),
           }}
         />
-
         <Drawer.Screen
           name="ReserveCampsite"
           component={ReservationNavigator}
@@ -258,7 +295,6 @@ const Main = () => {
             ),
           }}
         />
-
         <Drawer.Screen
           name="Favorites"
           component={FavoritesNavigator}
@@ -275,7 +311,6 @@ const Main = () => {
             ),
           }}
         />
-
         <Drawer.Screen
           name="About"
           component={AboutNavigator}
