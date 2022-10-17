@@ -14,7 +14,7 @@ const LoginScreen = () => {
     console.log("remember:", remember);
     if (remember) {
       SecureStore.setItemAsync(
-        "userinfo",
+        userinfo,
         JSON.stringify({
           username,
           password,
