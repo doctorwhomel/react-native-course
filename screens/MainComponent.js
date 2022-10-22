@@ -30,7 +30,7 @@ import { fetchPromotions } from "../features/promotions/promotionsSlice";
 import { fetchComments } from "../features/comments/commentsSlice";
 import FavoritesScreen from "./FavoritesScreen";
 import LoginScreen from "./LoginScreen";
-import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/core";
 import NetInfo from "@react-native-community/netinfo";
 
 const Drawer = createDrawerNavigator();
@@ -233,9 +233,28 @@ const Main = () => {
     dispatch(fetchPromotions());
     dispatch(fetchPartners());
     dispatch(fetchComments());
+    showNetInfo();
   }, [dispatch]);
 
-  useEffect(() => {
+  const showNetInfo = async () => {
+    connectionInfo = await NetInfo.fetch().then((connectionInfo) => {
+      Platform.OS === "ios"
+        ? Alert.alert("Initial Network Connectivity Type:", connectionInfo.type)
+        : ToastAndroid.show(
+            "Initial Network Connectivity Type: " + connectionInfo.type,
+            ToastAndroid.LONG
+          );
+    });
+
+    /* const unsubscribeNetInfo = NetInfo.addEventListener((connectionInfo) => {
+      handleConnectivityChange(connectionInfo);
+    });
+
+    return unsubscribeNetInfo;
+   */
+  };
+
+  /* useEffect(() => {
     NetInfo.fetch().then((connectionInfo) => {
       Platform.OS === "ios"
         ? Alert.alert("Initial Network Connectivity Type:", connectionInfo.type)
@@ -250,7 +269,7 @@ const Main = () => {
     });
 
     return unsubscribeNetInfo;
-  }, []);
+  }, []); */
 
   const handleConnectivityChange = (connectionInfo) => {
     let connectionMsg = "You are now connected to an active network.";
