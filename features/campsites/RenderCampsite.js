@@ -1,5 +1,12 @@
 import { useRef } from "react";
-import { StyleSheet, Text, View, Alert, PanResponder } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Alert,
+  PanResponder,
+  Share,
+} from "react-native";
 import { Card, Icon } from "react-native-elements";
 import { baseUrl } from "../../shared/baseUrl";
 import * as Animatable from "react-native-animatable";
@@ -10,9 +17,10 @@ const RenderCampsite = (props) => {
   const view = useRef();
 
   const isLeftSwipe = ({ dx }) => dx < -200;
+  const isRightSwipe = ({ dx }) => dx > 200;
 
   const panResponder = PanResponder.create({
-    onStartShouldSetPanResponderCapture: () => true,
+    onStartShouldSetPanResponder: () => true,
     onPanResponderGrant: () => {
       view.current
         .rubberBand(1000)
@@ -21,16 +29,14 @@ const RenderCampsite = (props) => {
         );
     },
     onPanResponderEnd: (e, gestureState) => {
-      console.log("pan responder end", gestureState);
       if (isLeftSwipe(gestureState)) {
         Alert.alert(
           "Add Favorite",
-          "Are you sure you wish to add " + campsite.name + " to favorites",
+          "Are you sure you wish to add " + campsite.name + " to favorites?",
           [
             {
               text: "Cancel",
               style: "cancel",
-              onPress: () => console.log("Cancel Pressed"),
             },
             {
               text: "OK",
@@ -42,9 +48,24 @@ const RenderCampsite = (props) => {
           ],
           { cancelable: false }
         );
+      } else if (isRightSwipe(gestureState)) {
+        props.onShowModal();
       }
     },
   });
+
+  const shareCampsite = (title, message, url) => {
+    Share.share(
+      {
+        title,
+        message: `${title}: ${message} ${url}`,
+        url,
+      },
+      {
+        dialogTitle: "Share " + title,
+      }
+    );
+  };
 
   if (campsite) {
     return (
@@ -82,6 +103,20 @@ const RenderCampsite = (props) => {
               raised
               reverse
               onPress={() => props.onShowModal()}
+            />
+            <Icon
+              name={"share"}
+              type="font-awesome"
+              color="#5637DD"
+              raised
+              reverse
+              onPress={() =>
+                shareCampsite(
+                  campsite.name,
+                  campsite.description,
+                  baseUrl + campsite.image
+                )
+              }
             />
           </View>
         </Card>
